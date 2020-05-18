@@ -154,7 +154,7 @@
   "resources": [
     {
       "apiVersion": "2020-04-01",
-      "type": "Microsoft.Network/pipAddresses",
+      "type": "Microsoft.Network/publicIPAddresses",
       "name": "[variables('pipName')]",
       "location": "[parameters('location')]",
       "properties": {
