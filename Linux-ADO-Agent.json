@@ -158,7 +158,7 @@
       "name": "[variables('pipName')]",
       "location": "[parameters('location')]",
       "properties": {
-        "pipAllocationMethod": "[parameters('pipAddressType')]"
+        "publicIPAllocationMethod": "[parameters('pipAddressType')]"
       }
     },
     {
@@ -175,7 +175,7 @@
             "name": "ipconfig1",
             "properties": {
               "privateIPAllocationMethod": "Dynamic",
-              "pipAddress": {
+              "publicIPAddress": {
                 "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('pipName'))]"
               },
               "subnet": {
@@ -237,7 +237,7 @@
     },
         {
       "type": "Microsoft.Compute/virtualMachines/extensions",
-      "name": "[concat(parameters('vmName'),'/newuserscript')]",
+      "name": "[concat(parameters('vmName'),'/ado-agent-setup')]",
       "apiVersion": "2019-12-01",
       "location": "[parameters('location')]",
       "dependsOn": [
@@ -254,7 +254,7 @@
           ]
         },
         "protectedSettings": {
-          "commandToExecute": "[concat('sh full-adobuild-install.sh',' ',parameters('adoAccountURL'),' ',parameters('adoPAT'),' ',parameters('adoPoolName'),' ',parameters('adoAgentName'),' ',parameters('adminUsername'))]"
+          "commandToExecute": "[concat('sh linux-agent-setup.sh',' ',parameters('adoAccountURL'),' ',parameters('adoPAT'),' ',parameters('adoPoolName'),' ',parameters('adoAgentName'))]"
         }
       }
     }
