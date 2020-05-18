@@ -1,2 +1,2 @@
 # ADO-Agents
- ARM templates for Azure DevOps VM agents
+This repo contains an ARM template and script to deploy and configure a new linux vm as an Azure DevOps agent.
