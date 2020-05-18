@@ -167,7 +167,7 @@
       "name": "[variables('nicName')]",
       "location": "[parameters('location')]",
       "dependsOn": [
-        "[concat('Microsoft.Network/pipAddresses/', variables('pipName'))]"
+        "[concat('Microsoft.Network/publicIPAddressesAddresses/', variables('pipName'))]"
       ],
       "properties": {
         "ipConfigurations": [
@@ -176,7 +176,7 @@
             "properties": {
               "privateIPAllocationMethod": "Dynamic",
               "pipAddress": {
-                "id": "[resourceId('Microsoft.Network/pipAddresses', variables('pipName'))]"
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('pipName'))]"
               },
               "subnet": {
                 "id": "[variables('subnetRef')]"
