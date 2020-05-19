@@ -5,10 +5,11 @@ URL=$1
 PAT=$2
 POOL=$3
 AGENT=$4
+USER=$5
 
 
 echo "Updating packages ..."
-sudo cd ~
+cd /home/$USER
 apt update
 apt upgrade -y
 

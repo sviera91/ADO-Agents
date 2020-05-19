@@ -254,7 +254,7 @@
           ]
         },
         "protectedSettings": {
-          "commandToExecute": "[concat('sh linux-agent-setup.sh',' ',parameters('adoAccountURL'),' ',parameters('adoPAT'),' ',parameters('adoPoolName'),' ',parameters('adoAgentName'))]"
+          "commandToExecute": "[concat('sh linux-agent-setup.sh',' ',parameters('adoAccountURL'),' ',parameters('adoPAT'),' ',parameters('adoPoolName'),' ',parameters('adoAgentName'),' ',parameters('adminUsername'))]"
         }
       }
     }
