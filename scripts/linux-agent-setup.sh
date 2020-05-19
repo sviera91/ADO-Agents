@@ -8,6 +8,7 @@ AGENT=$4
 
 
 echo "Updating packages ..."
+sudo cd ~
 apt update
 apt upgrade -y
 
