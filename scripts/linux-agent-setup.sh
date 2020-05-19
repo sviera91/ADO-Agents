@@ -66,7 +66,7 @@ echo "--- Setting Azure DevOps Agent ---"
 mkdir ado-agent
 cd ado-agent
 wget https://vstsagentpackage.azureedge.net/agent/2.168.2/vsts-agent-linux-x64-2.168.2.tar.gz
-tar zxvf /home/$USER/vsts-agent-linux-x64-2.168.2.tar.gz
+tar zxvf vsts-agent-linux-x64-2.168.2.tar.gz
 ./config.sh --unattended --url $URL --auth pat --token $PAT --pool $POOL --agent $AGENT --acceptTeeEula
 ./svc.sh install
 ./svc.sh start
