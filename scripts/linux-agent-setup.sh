@@ -64,7 +64,7 @@ sudo mv ./terraform /usr/local/bin/terraform
 echo "--- Setting Azure DevOps Agent ---"
 wget https://vstsagentpackage.azureedge.net/agent/2.168.2/vsts-agent-linux-x64-2.168.2.tar.gz
 sudo mkdir ado-agent && cd ado-agent
-sudo tar zxvf ~/vsts-agent-linux-x64-2.168.2.tar.gz
+sudo tar zxvf /home/$USER/vsts-agent-linux-x64-2.168.2.tar.gz
 sudo ./config.sh --unattended --url $URL --auth pat --token $PAT --pool $POOL --agent $AGENT --acceptTeeEula
 sudo ./svc.sh install
 sudo ./svc.sh start
