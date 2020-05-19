@@ -44,7 +44,7 @@ sudo add-apt-repository \
 
 sudo apt update
 sudo apt install -y docker-ce docker-ce-cli containerd.io
-#sudo usermod -aG docker $USER
+sudo usermod -aG docker $USER
 
 echo "--- Installing kubectl ---"
 sudo apt update && sudo apt install -y apt-transport-https gnupg2
