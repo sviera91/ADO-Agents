@@ -68,6 +68,7 @@ cd ado-agent
 wget https://vstsagentpackage.azureedge.net/agent/2.168.2/vsts-agent-linux-x64-2.168.2.tar.gz
 tar zxvf vsts-agent-linux-x64-2.168.2.tar.gz
 chown root:root /home/$USER/ado-agent/ -R
+sudo chmod o+w /home/$USER/ado-agent
 ./config.sh --unattended --url $URL --auth pat --token $PAT --pool $POOL --agent $AGENT --acceptTeeEula
 ./svc.sh install
 ./svc.sh start
