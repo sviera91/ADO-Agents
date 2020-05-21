@@ -47,7 +47,7 @@
     },
     "imageSKU": {
       "type": "string",
-      "defaultValue": "2019-Datacenter",
+      "defaultValue": "2019-Datacenter-smalldisk",
       "metadata": {
         "description": "Image SKU"
       }
@@ -84,18 +84,7 @@
         "description": "Location for all resources."
       }
     },
-    "authenticationType": {
-      "type": "string",
-      "defaultValue": "sshPublicKey",
-      "allowedValues": [
-        "sshPublicKey",
-        "password"
-      ],
-      "metadata": {
-        "description": "Type of authentication to use on the Virtual Machine. SSH key is recommended."
-      }
-    },
-    "adminPasswordOrKey": {
+    "adminPassword": {
       "type": "securestring",
       "metadata": {
         "description": "SSH Key or password for the Virtual Machine. SSH key is recommended."
@@ -136,18 +125,7 @@
   },
   "variables": {
     "vnetID": "[resourceId(parameters('virtualNetworkResourceGroup'), 'Microsoft.Network/virtualNetworks', parameters('virtualNetworkName'))]",
-    "subnetRef": "[concat(variables('vnetID'),'/subnets/', parameters('subnetName'))]",
-    "linuxConfiguration": {
-      "disablePasswordAuthentication": true,
-      "ssh": {
-        "publicKeys": [
-          {
-            "path": "[concat('/home/', parameters('adminUsername'), '/.ssh/authorized_keys')]",
-            "keyData": "[parameters('adminPasswordOrKey')]"
-          }
-        ]
-      }
-    }
+    "subnetRef": "[concat(variables('vnetID'),'/subnets/', parameters('subnetName'))]"
   },
   "resources": [
     {
@@ -207,8 +185,7 @@
         "osProfile": {
           "computerName": "[concat(parameters('vmName'),copyIndex(1))]",
           "adminUsername": "[parameters('adminUsername')]",
-          "adminPassword": "[parameters('adminPasswordOrKey')]",
-          "linuxConfiguration": "[if(equals(parameters('authenticationType'), 'password'), json('null'), variables('linuxConfiguration'))]"
+          "adminPassword": "[parameters('adminPassword')]"
         },
         "storageProfile": {
           "imageReference": {
@@ -245,26 +222,44 @@
                 "count": "[parameters('numAgents')]"
       }
     },
-        {
+    {
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "name": "networkWatcher",
+      "apiVersion": "2019-12-01",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+          "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'),copyIndex(1))]"
+      ],
+      "tags": {
+      },
+      "properties": {
+          "publisher": "Microsoft.Azure.NetworkWatcher",
+          "type": "NetworkWatcherAgentWindows",
+          "typeHandlerVersion": "1.4",
+          "autoUpgradeMinorVersion": true
+      }
+    },
+    {
       "type": "Microsoft.Compute/virtualMachines/extensions",
       "name": "[concat(parameters('vmName'),copyIndex(1),'/ado-agent-setup')]",
       "apiVersion": "2019-12-01",
       "location": "[parameters('location')]",
       "dependsOn": [
-        "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'),copyIndex(1))]"
+        "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'),copyIndex(1))]",
+        "NetworkWatcher"
       ],
       "properties": {
-        "publisher": "Microsoft.Azure.Extensions",
-        "type": "CustomScript",
-        "typeHandlerVersion": "2.1",
+        "publisher": "Microsoft.Compute",
+        "type": "CustomScriptExtension",
+        "typeHandlerVersion": "1.10",
         "autoUpgradeMinorVersion": true,
         "settings": {
           "fileUris": [
-            "https://raw.githubusercontent.com/sviera91/ADO-Agents/master/scripts/linux-agent-setup.sh"
+            "https://raw.githubusercontent.com/sviera91/ADO-Agents/master/scripts/windows-agent-setup.ps1"
           ]
         },
         "protectedSettings": {
-          "commandToExecute": "[concat('sh linux-agent-setup.sh',' ',parameters('adoAccountURL'),' ',parameters('adoPAT'),' \"',parameters('adoPoolName'),'\" ',parameters('adoAgentName'),copyIndex(1),' ',parameters('adminUsername'))]"
+          "commandToExecute": "[concat('powershell.exe -ExecutionPolicy Unrestricted -File ./windows-agent-setup.ps1, ','-devopsOrg ', parameters('adoAccountURL'), ' -PATToken ', parameters('adoPAT'), ' -pool ', parameters('adoPoolName'),' -agent ',parameters('adoAgentName'))]"
         }
       },
       "copy": {
