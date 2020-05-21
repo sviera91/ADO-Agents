@@ -224,7 +224,7 @@
     },
     {
       "type": "Microsoft.Compute/virtualMachines/extensions",
-      "name": "networkWatcher",
+      "name": "[concat(parameters('vmName'),copyIndex(1),'/networkwatcher')]",
       "apiVersion": "2019-12-01",
       "location": "[parameters('location')]",
       "dependsOn": [
@@ -237,6 +237,10 @@
           "type": "NetworkWatcherAgentWindows",
           "typeHandlerVersion": "1.4",
           "autoUpgradeMinorVersion": true
+      },
+      "copy": {
+                "name": "extensionnwcopy",
+                "count": "[parameters('numAgents')]"
       }
     },
     {
@@ -246,7 +250,7 @@
       "location": "[parameters('location')]",
       "dependsOn": [
         "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'),copyIndex(1))]",
-        "NetworkWatcher"
+        "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'),copyIndex(1),'/extensions/networkwatcher')]"
       ],
       "properties": {
         "publisher": "Microsoft.Compute",
@@ -259,7 +263,7 @@
           ]
         },
         "protectedSettings": {
-          "commandToExecute": "[concat('powershell.exe -ExecutionPolicy Unrestricted -File ./windows-agent-setup.ps1, ','-devopsOrg ', parameters('adoAccountURL'), ' -PATToken ', parameters('adoPAT'), ' -pool ', parameters('adoPoolName'),' -agent ',parameters('adoAgentName'))]"
+          "commandToExecute": "[concat('powershell.exe -ExecutionPolicy Unrestricted -File ./windows-agent-setup.ps1 ','-devopsOrg ', parameters('adoAccountURL'), ' -PATToken ', parameters('adoPAT'), ' -pool ', parameters('adoPoolName'),' -agent ',parameters('adoAgentName'))]"
         }
       },
       "copy": {

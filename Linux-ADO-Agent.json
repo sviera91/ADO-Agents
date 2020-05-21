@@ -266,6 +266,10 @@
           "type": "NetworkWatcherAgentLinux",
           "typeHandlerVersion": "1.4",
           "autoUpgradeMinorVersion": true
+      },
+      "copy": {
+                "name": "extensionnwcopy",
+                "count": "[parameters('numAgents')]"
       }
     },
     {
@@ -275,7 +279,7 @@
       "location": "[parameters('location')]",
       "dependsOn": [
         "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'),copyIndex(1))]",
-        "NetworkWatcher"
+        "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'),copyIndex(1),'/extensions/networkwatcher')]"
       ],
       "properties": {
         "publisher": "Microsoft.Azure.Extensions",

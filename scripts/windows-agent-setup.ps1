@@ -22,11 +22,12 @@ write-host "--- Install Chocolatey ---"
 iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 
 write-host "--- Install tools ---"
+choco feature enable -n allowGlobalConfirmation
 choco install python -y
 choco install awscli -y
 choco install docker-desktop -y
 choco install terraform -y
-choco install azure-cli
+choco install azure-cli -y
 refreshenv
 
 write-host "--- Setting Azure DevOps Agent ---"
