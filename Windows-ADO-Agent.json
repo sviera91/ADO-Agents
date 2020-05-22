@@ -263,7 +263,7 @@
           ]
         },
         "protectedSettings": {
-          "commandToExecute": "[concat('powershell.exe -ExecutionPolicy Unrestricted -File ./windows-agent-setup.ps1 ','-devopsOrg ', parameters('adoAccountURL'), ' -PATToken ', parameters('adoPAT'), ' -pool ', parameters('adoPoolName'),' -agent ',parameters('adoAgentName'))]"
+          "commandToExecute": "[concat('powershell.exe -ExecutionPolicy Unrestricted -File ./windows-agent-setup.ps1 ','-devopsOrg ', parameters('adoAccountURL'), ' -PATToken ', parameters('adoPAT'), ' -pool ', parameters('adoPoolName'),' -agent ',parameters('adoAgentName'),copyIndex(1))]"
         }
       },
       "copy": {
