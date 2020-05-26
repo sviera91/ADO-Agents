@@ -137,50 +137,51 @@
   },
   "resources": [
     {
-      "apiVersion": "2020-04-01",
-      "type": "Microsoft.Network/publicIPAddresses",
+      "condition": "[equals(parameters('bastionhostNeeded'),'yes')]",
       "name": "[concat(parameters('bastionhostName'),'-pip')]",
+      "type": "Microsoft.Network/publicIPAddresses",
+      "apiVersion": "2020-04-01",
       "location": "[parameters('location')]",
       "sku": {
-                "name": "Standard"
-            },
+        "name": "Standard"
+      },
       "properties": {
         "publicIPAllocationMethod": "Static",
         "publicIPAddressVersion": "IPv4"
       }
     },
     {
-        "condition": "[equals(parameters('bastionhostNeeded'),'yes')]",
-        "name": "[parameters('bastionhostName')]",
-        "type": "Microsoft.Network/bastionHosts",
-        "apiVersion": "2019-11-01",
-        "location": "[parameters('location')]",
-        "tags": {
-        },
-        "dependsOn": [
-            "[resourceId('Microsoft.Network/publicIPAddresses',concat(parameters('bastionhostName'),'-pip'))]"
-        ],
-        "properties": {
-            "ipConfigurations": [
-                {
-                    "properties": {
-                        "subnet": {
-                            "id": "[variables('bhSubnetRef')]"
-                        },
-                        "publicIPAddress": {
-                            "id": "[resourceId('Microsoft.Network/publicIPAddresses',concat(parameters('bastionhostName'),'-pip'))]"
-                        },
-                        "privateIPAllocationMethod": "Dynamic"
-                    },
-                    "name": "[concat(parameters('bastionhostName'),'-ipconfig01')]"
-                }
-            ]
-        }
+      "condition": "[equals(parameters('bastionhostNeeded'),'yes')]",
+      "name": "[parameters('bastionhostName')]",
+      "type": "Microsoft.Network/bastionHosts",
+      "apiVersion": "2019-11-01",
+      "location": "[parameters('location')]",
+      "tags": {
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/publicIPAddresses',concat(parameters('bastionhostName'),'-pip'))]"
+      ],
+      "properties": {
+        "ipConfigurations": [
+          {
+            "properties": {
+              "subnet": {
+                "id": "[variables('bhSubnetRef')]"
+              },
+              "publicIPAddress": {
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses',concat(parameters('bastionhostName'),'-pip'))]"
+              },
+              "privateIPAllocationMethod": "Dynamic"
+            },
+            "name": "[concat(parameters('bastionhostName'),'-ipconfig01')]"
+          }
+        ]
+      }
     },
     {
-      "apiVersion": "2020-04-01",
-      "type": "Microsoft.Network/networkInterfaces",
       "name": "[concat(parameters('vmName'),copyIndex(1),'-nic')]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "apiVersion": "2020-04-01",
       "location": "[parameters('location')]",
       "properties": {
         "ipConfigurations": [
@@ -196,14 +197,14 @@
         ]
       },
       "copy": {
-                "name": "niccopy",
-                "count": "[parameters('numAgents')]"
+        "name": "niccopy",
+        "count": "[parameters('numAgents')]"
       }
     },
     {
-      "apiVersion": "2019-12-01",
-      "type": "Microsoft.Compute/virtualMachines",
       "name": "[concat(parameters('vmName'),copyIndex(1))]",
+      "type": "Microsoft.Compute/virtualMachines",
+      "apiVersion": "2019-12-01",
       "location": "[parameters('location')]",
       "dependsOn": [
         "[concat('Microsoft.Network/networkInterfaces/', parameters('vmName'),copyIndex(1),'-nic')]"
@@ -248,34 +249,34 @@
         }
       },
       "copy": {
-                "name": "vmcopy",
-                "count": "[parameters('numAgents')]"
+        "name": "vmcopy",
+        "count": "[parameters('numAgents')]"
       }
     },
     {
-      "type": "Microsoft.Compute/virtualMachines/extensions",
       "name": "[concat(parameters('vmName'),copyIndex(1),'/networkwatcher')]",
+      "type": "Microsoft.Compute/virtualMachines/extensions",
       "apiVersion": "2019-12-01",
       "location": "[parameters('location')]",
       "dependsOn": [
-          "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'),copyIndex(1))]"
+        "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'),copyIndex(1))]"
       ],
       "tags": {
       },
       "properties": {
-          "publisher": "Microsoft.Azure.NetworkWatcher",
-          "type": "NetworkWatcherAgentWindows",
-          "typeHandlerVersion": "1.4",
-          "autoUpgradeMinorVersion": true
+        "publisher": "Microsoft.Azure.NetworkWatcher",
+        "type": "NetworkWatcherAgentWindows",
+        "typeHandlerVersion": "1.4",
+        "autoUpgradeMinorVersion": true
       },
       "copy": {
-                "name": "extensionnwcopy",
-                "count": "[parameters('numAgents')]"
+        "name": "extensionnwcopy",
+        "count": "[parameters('numAgents')]"
       }
     },
     {
-      "type": "Microsoft.Compute/virtualMachines/extensions",
       "name": "[concat(parameters('vmName'),copyIndex(1),'/ado-agent-setup')]",
+      "type": "Microsoft.Compute/virtualMachines/extensions",
       "apiVersion": "2019-12-01",
       "location": "[parameters('location')]",
       "dependsOn": [
@@ -297,8 +298,8 @@
         }
       },
       "copy": {
-                "name": "extensioncopy",
-                "count": "[parameters('numAgents')]"
+        "name": "extensioncopy",
+        "count": "[parameters('numAgents')]"
       }
     }
   ]
