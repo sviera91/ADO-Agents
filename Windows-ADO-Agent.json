@@ -8,14 +8,21 @@
         "description": "Name of Boot Diagnostics Storage Account"
       }
     },
-    "pipAddressType": {
+    "bastionhostNeeded": {
       "type": "string",
-      "defaultValue": "Dynamic",
       "allowedValues": [
-        "Dynamic"
+        "yes",
+        "no"
       ],
       "metadata": {
-        "description": "Type of Public Address"
+        "description": "Name of BastionHost"
+      }
+    },
+    "bastionhostName": {
+      "type": "string",
+      "defaultValue": "optional",
+      "metadata": {
+        "description": "Name of BastionHost if not existent"
       }
     },
     "vmName": {
@@ -71,10 +78,10 @@
         "description": "Resource Group VNET is deployed in"
       }
     },
-    "subnetName": {
+    "vmSubnetName": {
       "type": "string",
       "metadata": {
-        "description": "Name of the subnet inside the VNET"
+        "description": "Name of the vm subnet inside the VNET"
       }
     },
     "location": {
@@ -125,41 +132,64 @@
   },
   "variables": {
     "vnetID": "[resourceId(parameters('virtualNetworkResourceGroup'), 'Microsoft.Network/virtualNetworks', parameters('virtualNetworkName'))]",
-    "subnetRef": "[concat(variables('vnetID'),'/subnets/', parameters('subnetName'))]"
+    "vmSubnetRef": "[concat(variables('vnetID'),'/subnets/', parameters('vmSubnetName'))]",
+    "bhSubnetRef": "[concat(variables('vnetID'),'/subnets/AzureBastionSubnet')]"
   },
   "resources": [
     {
       "apiVersion": "2020-04-01",
       "type": "Microsoft.Network/publicIPAddresses",
-      "name": "[concat(parameters('vmName'),copyIndex(1),'-pip')]",
+      "name": "[concat(parameters('bastionhostName'),'-pip')]",
       "location": "[parameters('location')]",
+      "sku": {
+                "name": "Standard"
+            },
       "properties": {
-        "publicIPAllocationMethod": "[parameters('pipAddressType')]"
-      },
-      "copy": {
-                "name": "pipcopy",
-                "count": "[parameters('numAgents')]"
+        "publicIPAllocationMethod": "Static",
+        "publicIPAddressVersion": "IPv4"
       }
+    },
+    {
+        "condition": "[equals(parameters('bastionhostNeeded'),'yes')]",
+        "name": "[parameters('bastionhostName')]",
+        "type": "Microsoft.Network/bastionHosts",
+        "apiVersion": "2019-11-01",
+        "location": "[parameters('location')]",
+        "tags": {
+        },
+        "dependsOn": [
+            "[resourceId('Microsoft.Network/publicIPAddresses',concat(parameters('bastionhostName'),'-pip'))]"
+        ],
+        "properties": {
+            "ipConfigurations": [
+                {
+                    "properties": {
+                        "subnet": {
+                            "id": "[variables('bhSubnetRef')]"
+                        },
+                        "publicIPAddress": {
+                            "id": "[resourceId('Microsoft.Network/publicIPAddresses',concat(parameters('bastionhostName'),'-pip'))]"
+                        },
+                        "privateIPAllocationMethod": "Dynamic"
+                    },
+                    "name": "[concat(parameters('bastionhostName'),'-ipconfig01')]"
+                }
+            ]
+        }
     },
     {
       "apiVersion": "2020-04-01",
       "type": "Microsoft.Network/networkInterfaces",
       "name": "[concat(parameters('vmName'),copyIndex(1),'-nic')]",
       "location": "[parameters('location')]",
-      "dependsOn": [
-        "[concat('Microsoft.Network/publicIPAddresses/',parameters('vmName'),copyIndex(1),'-pip')]"
-      ],
       "properties": {
         "ipConfigurations": [
           {
             "name": "ipconfig1",
             "properties": {
               "privateIPAllocationMethod": "Dynamic",
-              "publicIPAddress": {
-                "id": "[resourceId('Microsoft.Network/publicIPAddresses', concat(parameters('vmName'),copyIndex(1),'-pip'))]"
-              },
               "subnet": {
-                "id": "[variables('subnetRef')]"
+                "id": "[variables('vmSubnetRef')]"
               }
             }
           }
