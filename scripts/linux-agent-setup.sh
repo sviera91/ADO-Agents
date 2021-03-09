@@ -70,7 +70,7 @@ tar zxvf vsts-agent-linux-x64-2.183.1.tar.gz
 chown root:root /home/$USER/ado-agent/ -R
 sudo chmod o+w /home/$USER/ado-agent
 export AGENT_ALLOW_RUNASROOT="1"
-./bin/installdependencies.sh
+#./bin/installdependencies.sh
 ./config.sh --unattended --url $URL --auth pat --token $PAT --pool $POOL --agent $AGENT --acceptTeeEula
 ./svc.sh install
 ./svc.sh start
