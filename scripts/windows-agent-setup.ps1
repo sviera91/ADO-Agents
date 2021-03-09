@@ -33,6 +33,6 @@ refreshenv
 write-host "--- Setting Azure DevOps Agent ---"
 mkdir c:\agent
 cd c:\agent
-Invoke-WebRequest -Uri https://vstsagentpackage.azureedge.net/agent/2.166.3/vsts-agent-win-x64-2.166.3.zip -OutFile "c:\agent\vsts-agent-win-x64-2.166.3.zip" -UseBasicParsing
-Add-Type -AssemblyName System.IO.Compression.FileSystem; [System.IO.Compression.ZipFile]::ExtractToDirectory("c:\agent\vsts-agent-win-x64-2.166.3.zip", "$PWD")
+Invoke-WebRequest -Uri https://vstsagentpackage.azureedge.net/agent/2.183.1/vsts-agent-win-x64-2.183.1.zip -OutFile "c:\agent\vsts-agent-win-x64-2.183.1.zip" -UseBasicParsing
+Add-Type -AssemblyName System.IO.Compression.FileSystem; [System.IO.Compression.ZipFile]::ExtractToDirectory("c:\agent\vsts-agent-win-x64-2.183.1.zip", "$PWD")
 .\config.cmd --unattended --url $devopsOrg --auth PAT --token $PATToken --runAsService --pool $pool --agent $agent --replace
