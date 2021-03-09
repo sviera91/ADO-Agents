@@ -65,8 +65,8 @@ sudo mv ./terraform /usr/local/bin/terraform
 echo "--- Setting Azure DevOps Agent ---"
 mkdir ado-agent
 cd ado-agent
-wget https://vstsagentpackage.azureedge.net/agent/2.168.2/vsts-agent-linux-x64-2.168.2.tar.gz
-tar zxvf vsts-agent-linux-x64-2.168.2.tar.gz
+wget https://vstsagentpackage.azureedge.net/agent/2.183.1/vsts-agent-linux-x64-2.183.1.tar.gz
+tar zxvf vsts-agent-linux-x64-2.183.1.tar.gz
 chown root:root /home/$USER/ado-agent/ -R
 sudo chmod o+w /home/$USER/ado-agent
 export AGENT_ALLOW_RUNASROOT="1"
